@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Para Isa 💗</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
   <style>
     body {
@@ -17,113 +17,103 @@
       align-items: center;
       padding: 20px;
       box-sizing: border-box;
-      overflow: hidden; /* Evita scroll mientras salen corazones */
-      touch-action: manipulation; /* Optimiza toques en móvil */
+      overflow: hidden; 
+      touch-action: none; /* Evita zoom accidental al tocar */
     }
 
     #terminal {
-      max-width: 600px;
+      max-width: 500px;
       width: 100%;
-      background: rgba(20, 20, 20, 0.8);
-      border: 1px solid #ff5fa233;
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 0 30px rgba(255, 105, 180, 0.1);
+      background: rgba(20, 20, 20, 0.9);
+      border: 1px solid #ff5fa244;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 0 25px rgba(255, 95, 162, 0.2);
       position: relative;
-      z-index: 2;
+      z-index: 10;
     }
 
     #texto-animado {
       margin: 0;
       white-space: pre-wrap;
-      line-height: 1.6;
+      line-height: 1.8;
       font-size: 1.1rem;
-      min-height: 200px;
+      color: #eee;
     }
 
-    .heart {
+    .heart-inline {
       color: #ff5fa2;
-      text-shadow: 0 0 5px #ff5fa2;
+      font-weight: bold;
     }
 
-    /* Estilo para los corazones que caen */
-    .particle {
+    /* Estilo de los corazones flotantes */
+    .corazon-flotante {
       position: absolute;
       pointer-events: none;
-      animation: fly 2s linear forwards;
-      font-size: 20px;
-      z-index: 1;
+      font-size: 24px;
+      animation: animarCorazon 1.5s ease-out forwards;
+      z-index: 100;
     }
 
-    @keyframes fly {
+    @keyframes animarCorazon {
       0% { transform: translate(0, 0) scale(1); opacity: 1; }
-      100% { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; }
+      100% { transform: translate(var(--dx), var(--dy)) scale(1.5); opacity: 0; }
     }
 
-    /* Cursor de escritura */
     #texto-animado::after {
-      content: "|";
-      animation: blink 0.8s infinite;
+      content: "_";
+      animation: parpadeo 0.8s infinite;
       color: #ff5fa2;
     }
 
-    @keyframes blink {
-      50% { opacity: 0; }
-    }
+    @keyframes parpadeo { 50% { opacity: 0; } }
   </style>
 </head>
 
-<body onclick="crearCorazon(event)" ontouchstart="crearCorazon(event)">
+<body onclick="soltarCorazon(event)" ontouchstart="soltarCorazon(event)">
 
   <div id="terminal">
-    <pre id="texto-animado"></pre>
+    <div id="texto-animado"></div>
   </div>
 
   <script>
-    const texto = `Hola Isa 💗\n\nHoy quería regalarte algo distinto.\nAlgo simple, pero hecho con cariño.\n\nGracias por existir.\nGracias por tu risa.\nGracias por ser tú.\n\nNunca olvides lo especial que eres,\nni todo lo bonito que llevas dentro.\n\nCon mucho cariño,\nGus ❤`;
+    // El texto que se escribirá
+    const contenido = "Hola Isa 💗\n\nHoy quería regalarte algo distinto.\nAlgo simple, pero hecho con cariño.\n\nGracias por existir.\nGracias por tu risa.\nGracias por ser tú.\n\nNunca olvides lo especial que eres,\nni todo lo bonito que llevas dentro.\n\nCon mucho cariño,\nGus ❤";
     
-    let i = 0;
-    const contenedor = document.getElementById("texto-animado");
+    let index = 0;
+    const elemento = document.getElementById("texto-animado");
 
-    // Función efecto máquina de escribir
-    function escribir() {
-      if (i < texto.length) {
-        // Si el carácter es un corazón, lo envolvemos en un span
-        if (texto.slice(i, i+1) === "💗" || texto.slice(i, i+1) === "❤") {
-            contenedor.innerHTML += `<span class="heart">${texto.slice(i, i+1)}</span>`;
-        } else {
-            contenedor.innerHTML += texto.charAt(i);
-        }
-        i++;
-        setTimeout(escribir, 50); // Velocidad de escritura
+    function escribirTexto() {
+      if (index < contenido.length) {
+        let char = contenido[index];
+        // Si es un emoji, lo ponemos directo
+        elemento.innerHTML += char;
+        index++;
+        setTimeout(escribirTexto, 60);
       }
     }
 
-    // Iniciar escritura al cargar
-    window.onload = escribir;
+    // Iniciar cuando cargue la página
+    window.onload = escribirTexto;
 
-    // Función para los corazones al tocar
-    function crearCorazon(e) {
-      const heart = document.createElement("div");
-      heart.className = "particle";
-      heart.innerHTML = "💗";
+    // Función para los corazones mágicos
+    function soltarCorazon(e) {
+      const corazon = document.createElement("div");
+      corazon.className = "corazon-flotante";
+      corazon.innerHTML = Math.random() > 0.5 ? "💗" : "❤️";
       
-      // Ubicación del toque o click
-      const x = e.clientX || e.touches[0].clientX;
-      const y = e.clientY || e.touches[0].clientY;
+      const x = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+      const y = e.clientY || (e.touches ? e.touches[0].clientY : 0);
       
-      heart.style.left = x + "px";
-      heart.style.top = y + "px";
+      corazon.style.left = x + "px";
+      corazon.style.top = y + "px";
       
-      // Dirección aleatoria
-      heart.style.setProperty('--x', (Math.random() * 200 - 100) + "px");
-      heart.style.setProperty('--y', (Math.random() * -200 - 50) + "px");
+      // Dirección aleatoria para que floten hacia arriba
+      corazon.style.setProperty('--dx', (Math.random() * 100 - 50) + "px");
+      corazon.style.setProperty('--dy', (Math.random() * -150 - 50) + "px");
 
-      document.body.appendChild(heart);
-
-      setTimeout(() => {
-        heart.remove();
-      }, 2000);
+      document.body.appendChild(corazon);
+      setTimeout(() => corazon.remove(), 1500);
     }
   </script>
 </body>
