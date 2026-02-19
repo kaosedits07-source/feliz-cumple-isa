@@ -18,7 +18,7 @@
       padding: 20px;
       box-sizing: border-box;
       overflow: hidden; 
-      touch-action: none; /* Evita zoom accidental al tocar */
+      touch-action: none;
     }
 
     #terminal {
@@ -41,12 +41,22 @@
       color: #eee;
     }
 
-    .heart-inline {
+    .cumple {
+      display: block;
+      margin-top: 20px;
+      font-size: 1.5rem;
       color: #ff5fa2;
       font-weight: bold;
+      text-shadow: 0 0 10px #ff5fa266;
+      text-align: center;
+      animation: aparecer 2s ease-in;
     }
 
-    /* Estilo de los corazones flotantes */
+    @keyframes aparecer {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
     .corazon-flotante {
       position: absolute;
       pointer-events: none;
@@ -65,7 +75,6 @@
       animation: parpadeo 0.8s infinite;
       color: #ff5fa2;
     }
-
     @keyframes parpadeo { 50% { opacity: 0; } }
   </style>
 </head>
@@ -77,7 +86,6 @@
   </div>
 
   <script>
-    // El texto que se escribirá
     const contenido = "Hola Isa 💗\n\nHoy quería regalarte algo distinto.\nAlgo simple, pero hecho con cariño.\n\nGracias por existir.\nGracias por tu risa.\nGracias por ser tú.\n\nNunca olvides lo especial que eres,\nni todo lo bonito que llevas dentro.\n\nCon mucho cariño,\nGus ❤";
     
     let index = 0;
@@ -85,18 +93,19 @@
 
     function escribirTexto() {
       if (index < contenido.length) {
-        let char = contenido[index];
-        // Si es un emoji, lo ponemos directo
-        elemento.innerHTML += char;
+        elemento.innerHTML += contenido[index];
         index++;
         setTimeout(escribirTexto, 60);
+      } else {
+        // Al terminar de escribir, añade el mensaje de Feliz Cumpleaños
+        setTimeout(() => {
+          elemento.innerHTML += '<span class="cumple"><br>¡FELIZ CUMPLEAÑOS, ISA! 🎂✨</span>';
+        }, 1000);
       }
     }
 
-    // Iniciar cuando cargue la página
     window.onload = escribirTexto;
 
-    // Función para los corazones mágicos
     function soltarCorazon(e) {
       const corazon = document.createElement("div");
       corazon.className = "corazon-flotante";
@@ -108,7 +117,6 @@
       corazon.style.left = x + "px";
       corazon.style.top = y + "px";
       
-      // Dirección aleatoria para que floten hacia arriba
       corazon.style.setProperty('--dx', (Math.random() * 100 - 50) + "px");
       corazon.style.setProperty('--dy', (Math.random() * -150 - 50) + "px");
 
